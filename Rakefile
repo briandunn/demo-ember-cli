@@ -37,12 +37,10 @@ task :deploy do
 
   sh 'cd frontend && ember build --env production --output-path ../backend/public/ && cd ..'
 
-  unless `git status backend/public --porcelain` == ""
-    sh 'git add -A backend/public'
-    sh 'git commit -m "Asset compilation for deployment"'
-  end
-
+  abort("you must have a clean working copy to deploy.") unless `git status backend/public --porcelain` == ""
+  
+  sh 'git add -A backend/public'
+  sh 'git commit -m "Asset compilation for deployment"'
   sh 'git push heroku `git subtree split --prefix backend production`:master --force'
-
   sh 'git checkout -'
 end
